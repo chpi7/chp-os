@@ -48,10 +48,25 @@ make install-gcc
 make install-target-libgcc
 ```
 
+### grub
+```sh
+sudo apt install grub2
+
+# Download latest version from here https://www.gnu.org/software/xorriso
+wget https://www.gnu.org/software/xorriso/xorriso-1.5.6.pl02.tar.gz
+tar -xzf xorriso-1.5.6.pl02.tar.gz
+cd xorriso-1.5.6.pl02
+mkdir build && cd build
+../configure
+make
+sudo make install
+```
+
 ## Building
 ```sh
 mkdir build
-make
+make all
+# or look at the other targets that are there, surely there are some more :)
 ```
 
 ## Run with QEMU

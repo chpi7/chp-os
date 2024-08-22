@@ -7,10 +7,6 @@ SECTIONS
 
     /* Align sections to 4K, good for paging later. */
 
-    .rodata BLOCK(4K) : ALIGN(4K)
-    {
-    }
-
     /* Executable code */
     .text BLOCK(4K) : ALIGN(4K)
     {

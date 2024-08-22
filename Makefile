@@ -13,5 +13,15 @@ term: $(src_dir)/include/term.h $(src_dir)/term.c
 all: $(src_dir)/start.s $(src_dir)/start.o $(src_dir)/linker.ld term
 	$(cc) $(c_flags) -c $(src_dir)/start.s -o $(build_dir)/start.o
 	$(cc) $(c_flags) -I$(src_dir)/include -c $(src_dir)/kernel.c -o $(build_dir)/kernel.o
-	$(ld) $(ld_flags) -T $(src_dir)/linker.ld $(build_dir)/start.o $(build_dir)/kernel.o $(build_dir)/term.o -o $(build_dir)/mykernel.elf -lgcc
+	$(cc) $(c_flags) -I$(src_dir)/include -c $(src_dir)/printf.c -o $(build_dir)/printf.o
+	$(ld) $(ld_flags) -T $(src_dir)/linker.ld $(build_dir)/start.o $(build_dir)/kernel.o $(build_dir)/printf.o $(build_dir)/term.o -o $(build_dir)/mykernel.elf -lgcc
+
+package: all
+	mkdir -p $(build_dir)/isoroot/boot/grub
+	cp grub.cfg $(build_dir)/isoroot/boot/grub
+	cp $(build_dir)/mykernel.elf $(build_dir)/isoroot/boot
+	grub-mkrescue $(build_dir)/isoroot -o $(build_dir)/mykernel.iso
+
+qemu-iso: package
+	qemu-system-i386 -boot d -cdrom $(build_dir)/mykernel.iso -m 4096
 

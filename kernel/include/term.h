@@ -26,16 +26,8 @@ void term_col_bg(uint8_t c);
  */
 void term_putc(char c);
 
-/** 
- * Print a null-terminated string.
+/**
+ * For printf support
  */
-void term_print(const char* str);
-
-/** 
- * Print an i8 formatted as decimal.
- */
-void term_put_i8_dec(uint8_t num);
-void term_put_uint32(uint32_t num);
-void term_print_colormap();
-void term_print_var(const char* name, uint32_t num);
+void _putchar(char character);
 

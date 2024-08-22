@@ -1,7 +1,8 @@
 #include <stdint.h>
 
-#include "term.h"
 #include "multiboot.h"
+
+#include "printutil.h"
 
 #if !defined(__i386__)
 #error "Must use i386-elf cross compiler!"
@@ -9,8 +10,8 @@
 
 void print_multiboot_info(multiboot_info_t* mb_info)
 {
-    term_print("multiboot info:\n");
-#define PRINT_VAR(var) term_print_var(#var, mb_info->var)
+    printf("multiboot info:\n");
+#define PRINT_VAR(var) printf(#var ": 0x%x\n", mb_info->var)
     PRINT_VAR(vbe_mode);
     PRINT_VAR(vbe_control_info);
     PRINT_VAR(vbe_mode_info);
@@ -37,13 +38,12 @@ void kernel_main()
 
     term_init();
 
-    term_print("chp-os kernel_main\n");
-    term_print("Hello from kernel_main!\n");
+    printf("chp-os kernel_main\n");
+    printf("Hello from kernel_main!\n");
+    printf("mb_magic = %x\n", mb_magic);
+    printf("mb_info = %p\n", mb_info);
 
-    term_print_var("mb_magic", mb_magic);
-    term_print_var("mb_info", (uint32_t)mb_info);
-
-    term_print_colormap();
+    print_colormap();
 
     print_multiboot_info(mb_info);
 }
