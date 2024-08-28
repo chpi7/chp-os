@@ -12,6 +12,11 @@
 void term_init();
 
 /** 
+ * Clear the VGA buffer.
+ */
+void term_clear();
+
+/** 
  * Set foreground color to c.
  */
 void term_col_fg(uint8_t c);
