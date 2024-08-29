@@ -7,6 +7,8 @@
 #include "multiboot.h"
 #include "printutil.h"
 
+#include "ps2.h"
+
 #if !defined(__i386__)
 #error "Must use i386-elf cross compiler!"
 #endif
@@ -145,5 +147,7 @@ void kernel_main()
 
     print_colormap();
 
-    print_multiboot_info(mb_info);
+    // print_multiboot_info(mb_info);
+
+    test_ps2_port();
 }

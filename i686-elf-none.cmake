@@ -13,7 +13,7 @@ set(CMAKE_STRIP                 "${I686PATH}strip")
 set(CMAKE_SYSTEM_NAME           "Generic")
 set(CMAKE_SYSTEM_PROCESSOR      "x86")
 
-set(CMAKE_C_FLAGS               "-std=c11 -ffreestanding -g")
+set(CMAKE_C_FLAGS               "-std=c11 -ffreestanding")
 set(CMAKE_C_FLAGS_DEBUG         "-g")
 set(CMAKE_C_FLAGS_RELEASE       "")
 
