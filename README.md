@@ -64,14 +64,16 @@ sudo make install
 
 ## Building
 ```sh
-mkdir build
-make all
-# or look at the other targets that are there, surely there are some more :)
+cmake -B build -S . -DCMAKE_TOOLCHAIN_FILE=./i686-elf-none.cmake
+cmake --build build -t iso
 ```
 
 ## Run with QEMU
 ```sh
+# install
 sudo apt install qemu-system-x86 qemu-system qemu
+# then
+
 ```
 ```sh
 ```
