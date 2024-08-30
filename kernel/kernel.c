@@ -149,5 +149,5 @@ void kernel_main()
 
     // print_multiboot_info(mb_info);
 
-    test_ps2_port();
+    ps2_init();
 }

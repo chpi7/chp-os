@@ -18,6 +18,7 @@ set(SOURCES
     ${SRC_DIR}/kernel.c
     ${SRC_DIR}/printf.c
     ${SRC_DIR}/memory.c
+    ${SRC_DIR}/ps2.c
 )
 
 include_directories(${SRC_DIR}/include)
