@@ -73,7 +73,5 @@ cmake --build build -t iso
 # install
 sudo apt install qemu-system-x86 qemu-system qemu
 # then
-
-```
-```sh
+./run-qemu.sh build/kernel
 ```

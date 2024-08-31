@@ -1,10 +1,11 @@
-#include "ps2.h"
+#include "io/ps2/ps2.h"
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdio.h>
 
-#include "commondefs.h"
-#include "printf.h"
+#include "common/commondefs.h"
+#include "io/inout.h"
 
 #define IO_PORT_PS2_DATA (0x60)
 #define IO_PORT_PS2_STATUS (0x64)
@@ -65,41 +66,33 @@ typedef enum ps2_error
 } ps2_error;
 
 /* Whether two channels are supported. */
-static bool ps2_is_dual_channel = false;
+bool ps2_is_dual_channel = false;
 /* Whether port 1 has passed the self test. */
-static bool ps2_is_port1_valid = false;
+bool ps2_is_port1_valid = false;
 /* Whether port 2 has passed the self test. */
-static bool ps2_is_port2_valid = false;
+bool ps2_is_port2_valid = false;
 
-static ps2_device ps2_device1 = {.is_port_1 = true};
-static ps2_device ps2_device2 = {.is_port_1 = false};
+ps2_device ps2_device1 = {.is_port_1 = true};
+ps2_device ps2_device2 = {.is_port_1 = false};
 
-static void ps2_write_data(uint8_t data)
+inline __attribute__((always_inline)) static void ps2_write_data(uint8_t data)
 {
-    /* no single line */
-    __asm__ volatile("movb %0, %%al; outb %%al, $0x60" ::"r"(data) : "al");
+    outb(IO_PORT_PS2_DATA, data);
 }
 
-static uint8_t ps2_read_data()
+inline __attribute__((always_inline)) static uint8_t ps2_read_data()
 {
-    register uint8_t result __asm__("al");
-    __asm__ volatile("inb $0x60, %0" : "=r"(result));
-    return result;
+    return inb(IO_PORT_PS2_DATA);
 }
 
-static void ps2_write_command(uint8_t cmd)
+inline __attribute__((always_inline)) static void ps2_write_command(uint8_t data)
 {
-    /* no single line */
-    __asm__ volatile("movb %0, %%al; outb %%al, $0x64" ::"r"(cmd) : "al");
+    outb(IO_PORT_PS2_COMMAND, data);
 }
 
-static uint8_t ps2_read_status()
+inline __attribute__((always_inline)) static uint8_t ps2_read_status()
 {
-    register uint8_t result __asm__("al");
-    __asm__ volatile("inb $0x64, %0" : "=r"(result));
-    /* Without specific register for result: */
-    /* __asm__ volatile ("inb $0x60, %%al; mov %%al, %0" : "=r"(result) : : "al"); */
-    return result;
+    return inb(IO_PORT_PS2_STATUS);
 }
 
 /* Must be true before writing port 0x60 or 0x64. */

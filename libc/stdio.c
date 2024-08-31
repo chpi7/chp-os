@@ -33,8 +33,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "printf.h"
-
+#include "stdio.h"
 
 // define this globally (e.g. gcc -DPRINTF_INCLUDE_CONFIG_H ...) to include the
 // printf_config.h header file
@@ -42,6 +41,13 @@
 #ifdef PRINTF_INCLUDE_CONFIG_H
 #include "printf_config.h"
 #endif
+
+/**
+ * Output a character to a custom device like UART, used by the printf() function
+ * This function is declared here only. You have to write your custom implementation somewhere
+ * \param character Character to output
+ */
+extern void _putchar(char character);
 
 
 // 'ntoa' conversion buffer size, this must be big enough to hold one converted

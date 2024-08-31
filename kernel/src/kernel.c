@@ -1,23 +1,20 @@
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdio.h>
+#include <string.h>
 
-#include "arrayutil.h"
-#include "assert.h"
-#include "memory.h"
-#include "multiboot.h"
-#include "printutil.h"
-#include "commondefs.h"
-
-#include "ps2.h"
+#include "boot/multiboot.h"
+#include "common/arrayutil.h"
+#include "common/assert.h"
+#include "common/commondefs.h"
+#include "io/ps2/ps2.h"
+#include "io/tty/tty.h"
 
 #if !defined(__i386__)
 #error "Must use i386-elf cross compiler!"
 #endif
 
-__attribute__ ((constructor)) void test_constructor(void)
-{
-    printf("Running test-constructor\n");
-}
+__attribute__((constructor)) void test_constructor(void) { printf("Running test-constructor\n"); }
 
 void test_memcpy()
 {
@@ -141,7 +138,7 @@ void kernel_early_main()
     __asm__("mov %%eax, %0" : "=r"(mb_magic));
     __asm__("mov %%ebx, %0" : "=r"(mb_info));
 
-    term_init();
+    tty_init();
 
     const uint32_t expect_mb_magic = 0x2badb002;
 
@@ -161,7 +158,8 @@ void kernel_main()
     test_memmove();
     printf("\n");
 
-    print_colormap();
+    tty_print_colormap();
+    // tty_ascii_printable_table();
 
     ps2_init();
 }
