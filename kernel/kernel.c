@@ -6,12 +6,18 @@
 #include "memory.h"
 #include "multiboot.h"
 #include "printutil.h"
+#include "commondefs.h"
 
 #include "ps2.h"
 
 #if !defined(__i386__)
 #error "Must use i386-elf cross compiler!"
 #endif
+
+__attribute__ ((constructor)) void test_constructor(void)
+{
+    printf("Running test-constructor\n");
+}
 
 void test_memcpy()
 {
@@ -123,10 +129,12 @@ void print_multiboot_info(multiboot_info_t* mb_info)
 #undef PRINT_VAR
 }
 
-void kernel_main()
+static uint32_t mb_magic;
+static multiboot_info_t* mb_info;
+
+/* This just initializes the output (and maybe the heap or other things later) */
+void kernel_early_main()
 {
-    uint32_t mb_magic;
-    multiboot_info_t* mb_info;
     // https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html#OutputOperands
     // %0 refers to the first output operand.
     // =r means the value resides in a register.
@@ -135,10 +143,18 @@ void kernel_main()
 
     term_init();
 
+    const uint32_t expect_mb_magic = 0x2badb002;
+
+    printf("mb_magic okay: %s\n", BOOL_YES_NO(expect_mb_magic == mb_magic));
+    // printf("mb_info @ 0x%p\n", mb_info);
+    // print_multiboot_info(mb_info);
+    printf("early main done\n");
+}
+
+/* The main main kernel entrypoint */
+void kernel_main()
+{
     printf("chp-os kernel_main\n");
-    printf("Hello from kernel_main!\n");
-    printf("mb_magic = %x\n", mb_magic);
-    printf("mb_info = %p\n", mb_info);
 
     printf("memutil self-test:\n");
     test_memcpy();
@@ -146,8 +162,6 @@ void kernel_main()
     printf("\n");
 
     print_colormap();
-
-    // print_multiboot_info(mb_info);
 
     ps2_init();
 }

@@ -1,5 +1,7 @@
 // Name of the kernel entrypoint
+.extern kernel_early_main
 .extern kernel_main
+.extern _init
 
 // Global entrypoint for the linker to use as the entrypoint
 .global start
@@ -31,6 +33,10 @@
         // This only requires the stack to work
         // Thus, set up the stack pointer (stack grows downwards)
         mov $stack_top, %esp
+
+        call kernel_early_main
+
+        call _init
 
         call kernel_main
 

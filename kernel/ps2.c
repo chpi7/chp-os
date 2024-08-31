@@ -36,7 +36,7 @@ typedef enum ps2_device_type
     /** not yet handled. */
     ps2_device_type_unknown,
     /** Some old keyboard */
-    ps2_device_type_none, 
+    ps2_device_type_none,
     /** Standard PS/2 mouse */
     ps2_device_type_00,
     /** Mouse with scroll wheel */
@@ -319,7 +319,6 @@ static void ps2_reset_device(ps2_device *device)
             PS2_LOG("WARN: unknown device id 0x%x", device_id);
             device->type = ps2_device_type_unknown;
     }
-
 
     PS2_LOG_DEV(device, "initialized with type %u", device->type);
 }
