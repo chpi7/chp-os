@@ -8,6 +8,8 @@ set(SOURCES
     src/io/ps2/ps2.c
     src/arch/i686/start.s
     src/io/arch/i686/inout.c
+    src/log/log.c
+    src/system/segment.c
 )
 
 add_executable(
