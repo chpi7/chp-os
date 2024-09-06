@@ -9,12 +9,17 @@
 #include "common/commondefs.h"
 #include "io/ps2/ps2.h"
 #include "io/tty/tty.h"
+#include "system/segment.h"
+#include "system/interrupt.h"
 
 #if !defined(__i386__)
 #error "Must use i386-elf cross compiler!"
 #endif
 
-__attribute__((constructor)) void test_constructor(void) { printf("Running test-constructor\n"); }
+__attribute__((constructor)) void test_constructor(void)
+{
+    // printf("Running test-constructor\n");
+}
 
 void test_memcpy()
 {
@@ -142,10 +147,9 @@ void kernel_early_main()
 
     const uint32_t expect_mb_magic = 0x2badb002;
 
-    printf("mb_magic okay: %s\n", BOOL_YES_NO(expect_mb_magic == mb_magic));
+    printf("[early main]: mb_magic okay: %s\n", BOOL_YES_NO(expect_mb_magic == mb_magic));
     // printf("mb_info @ 0x%p\n", mb_info);
     // print_multiboot_info(mb_info);
-    printf("early main done\n");
 }
 
 /* The main main kernel entrypoint */
@@ -153,10 +157,14 @@ void kernel_main()
 {
     printf("chp-os kernel_main\n");
 
-    printf("memutil self-test:\n");
+    printf("[self-test]: memutil\n");
     test_memcpy();
     test_memmove();
-    printf("\n");
+
+    gdt_init();
+    gdt_flush();
+
+    idt_init();
 
     tty_print_colormap();
     // tty_ascii_printable_table();

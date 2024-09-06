@@ -1,4 +1,5 @@
 #include <stdarg.h>
+#include <stdio.h>
 
 /**
  * Higher number --> more verbose

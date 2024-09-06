@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #define ASSERT(condition)                          \
     do                                             \
     {                                              \
@@ -5,7 +7,7 @@
         {                                          \
             printf("Assertion failed" #condition); \
         }                                          \
-    } while (false)
+    } while (0)
 
 #define ASSERT_MSG(condition, msg, ...)                                         \
     do                                                                          \
@@ -14,4 +16,4 @@
         {                                                                       \
             printf("Assertion failed: " #condition ", " msg "\n", __VA_ARGS__); \
         }                                                                       \
-    } while (false)
+    } while (0)
