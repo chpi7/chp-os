@@ -19,6 +19,14 @@ typedef struct segment_descriptor
     uint8_t base_24_31 : 8;
 } __attribute__((packed)) segment_descriptor;
 
+typedef struct idt_descriptor_t
+{
+    uint16_t offset_0_15;
+    uint16_t cs;
+    uint16_t flags;
+    uint16_t offset_16_31;
+} __attribute__((packed)) idt_descriptor_t;
+
 typedef uint32_t segment_descr_flags;
 
 #define SEGMENT_DESCR_ENCODE_FLAG(v, offset) (((segment_descr_flags)(v & 0x1)) << offset)
@@ -30,12 +38,26 @@ typedef uint32_t segment_descr_flags;
 #define SEGMENT_DESCR_PRIV(t) (((segment_descr_flags)(t & 0x3)) << 13)
 #define SEGMENT_DESCR_DTYP(v) SEGMENT_DESCR_ENCODE_FLAG(v, 12)
 
+#define SEGMENT_SELECTOR_INDEX(i) ((uint16_t)i << 3)
+#define SEGMENT_SELECTOR_RPL(rpl) ((uint16_t)rpl & 0x3)
+#define SEGMENT_SELECTOR_TI_GDT ((uint16_t)0x0)
+#define SEGMENT_SELECTOR_TI_LDT ((uint16_t)0x4)
+
 #define SEGMENT_GDT_NUM_ENTRIES (8)  // can be up to to 2**13 == 8192 entries large
+#define SEGMENT_IDT_MAX_ENTRIES (255)
 
 typedef struct gdt_t
 {
     segment_descriptor descriptors[SEGMENT_GDT_NUM_ENTRIES];
 } gdt_t __attribute__((aligned(8)));
+
+#define GDT_INDEX_KERNEL_CODE (1)
+#define GDT_INDEX_KERNEL_DATA (2)
+
+typedef struct idt_t
+{
+    idt_descriptor_t entries[SEGMENT_IDT_MAX_ENTRIES];
+} idt_t __attribute__((aligned(8)));
 
 /**
  * As defined in:
@@ -95,3 +117,19 @@ void gdt_flush();
  * Initialize the GDT (for basic flat model).
  */
 void gdt_init();
+
+typedef struct idtr_t
+{
+    uint16_t limit;
+    uint32_t base;
+} __attribute__((packed)) idtr_t;
+
+/**
+ * Initialize the IDT.
+ */
+void idt_init();
+
+/**
+ * Flush the IDT (Execute LIDT).
+ */
+void idt_flush();

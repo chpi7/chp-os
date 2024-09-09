@@ -10,7 +10,6 @@
 #include "io/ps2/ps2.h"
 #include "io/tty/tty.h"
 #include "system/segment.h"
-#include "system/interrupt.h"
 
 #if !defined(__i386__)
 #error "Must use i386-elf cross compiler!"
@@ -165,6 +164,9 @@ void kernel_main()
     gdt_flush();
 
     idt_init();
+    idt_flush();
+    __asm__("sti");
+    __asm__("int3");
 
     tty_print_colormap();
     // tty_ascii_printable_table();

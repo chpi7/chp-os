@@ -10,7 +10,6 @@ set(SOURCES
     src/io/arch/i686/inout.c
     src/log/log.c
     src/system/segment.c
-    src/system/interrupt.c
     src/system/asm_bits.s
 )
 
