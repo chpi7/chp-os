@@ -51,85 +51,65 @@ idtr_reload:
 
 .extern isr_0_31
 
-.macro generic_isr_dispatch id=0
+.macro generic_isr_dispatch id
 isr_dispatch_\id:
-    # push %ebp
-    # mov %esp, %ebp
-    push $\id
-    call isr_0_31
-    # pop %ebp
+    push %ebp
+    mov %esp, %ebp
+    # TODO: proper handling of error code, etc (see Vol3 6.13)
+    pop %ebp
     iret
 .endm
 
-generic_isr_dispatch 0
-generic_isr_dispatch 1
-generic_isr_dispatch 2
-generic_isr_dispatch 3
-generic_isr_dispatch 4
-generic_isr_dispatch 5
-generic_isr_dispatch 6
-generic_isr_dispatch 7
-generic_isr_dispatch 8
-generic_isr_dispatch 9
-generic_isr_dispatch 10
-generic_isr_dispatch 11
-generic_isr_dispatch 12
-generic_isr_dispatch 13
-generic_isr_dispatch 14
-generic_isr_dispatch 15
-generic_isr_dispatch 16
-generic_isr_dispatch 17
-generic_isr_dispatch 18
-generic_isr_dispatch 19
-generic_isr_dispatch 20
-generic_isr_dispatch 21
-generic_isr_dispatch 22
-generic_isr_dispatch 23
-generic_isr_dispatch 24
-generic_isr_dispatch 25
-generic_isr_dispatch 26
-generic_isr_dispatch 27
-generic_isr_dispatch 28
-generic_isr_dispatch 29
-generic_isr_dispatch 30
-generic_isr_dispatch 31
+.macro isr_user_stubX id
+isr_user_stub_\id:
+    push %ebp
+    mov %esp, %ebp
+    mov $isr_user_handlers, %eax
+    mov (\id*4)(%eax), %eax
+    test %eax, %eax
+    jz isr_usr_stub_no_handler_\id
+    call *%eax
+    isr_usr_stub_no_handler_\id:
+    pop %ebp
+    iret
+.endm
 
+.altmacro
+.set i, 0
+.rept 32
+    generic_isr_dispatch %i
+    .set i, i + 1
+.endr
+
+.set i, 32
+.rept 256
+    isr_user_stubX %i
+    .set i, i + 1
+.endr
+
+
+.macro isr_insert_genericX number
+    .long isr_dispatch_\number
+.endm
+.macro isr_insert_userX number
+    .long isr_user_stub_\number
+.endm
 
 .section .data
-.align 8
+.align 4
 .global isr_dispatch_table
 isr_dispatch_table:
-    .long (isr_dispatch_0)
-    .long isr_dispatch_1
-    .long isr_dispatch_2
-    .long isr_dispatch_3
-    .long isr_dispatch_4
-    .long isr_dispatch_5
-    .long isr_dispatch_6
-    .long isr_dispatch_7
-    .long isr_dispatch_8
-    .long isr_dispatch_9
-    .long isr_dispatch_10
-    .long isr_dispatch_11
-    .long isr_dispatch_12
-    .long isr_dispatch_13
-    .long isr_dispatch_14
-    .long isr_dispatch_15
-    .long isr_dispatch_16
-    .long isr_dispatch_17
-    .long isr_dispatch_18
-    .long isr_dispatch_19
-    .long isr_dispatch_20
-    .long isr_dispatch_21
-    .long isr_dispatch_22
-    .long isr_dispatch_23
-    .long isr_dispatch_24
-    .long isr_dispatch_25
-    .long isr_dispatch_26
-    .long isr_dispatch_27
-    .long isr_dispatch_28
-    .long isr_dispatch_29
-    .long isr_dispatch_30
-    .long isr_dispatch_31
+    .set i, 0
+    .rept 32
+        isr_insert_genericX %i
+        .set i, i + 1
+    .endr
+    .set i, 32
+    .rept 224
+        isr_insert_userX %i
+        .set i, i + 1
+    .endr
 
-
+.global isr_user_handlers
+isr_user_handlers:
+    .skip 1024, 0

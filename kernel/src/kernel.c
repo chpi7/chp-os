@@ -10,6 +10,7 @@
 #include "io/ps2/ps2.h"
 #include "io/tty/tty.h"
 #include "system/segment.h"
+#include "system/interrupt.h"
 
 #if !defined(__i386__)
 #error "Must use i386-elf cross compiler!"
@@ -151,6 +152,11 @@ void kernel_early_main()
     // print_multiboot_info(mb_info);
 }
 
+static void test_handler()
+{
+    printf("Interrupt handler works!\n");
+}
+
 /* The main main kernel entrypoint */
 void kernel_main()
 {
@@ -164,9 +170,10 @@ void kernel_main()
     gdt_flush();
 
     idt_init();
+    idt_register_handler(32, test_handler);
     idt_flush();
-    __asm__("sti");
-    __asm__("int3");
+    __asm__("int $32");
+    __asm__("int $33");
 
     tty_print_colormap();
     // tty_ascii_printable_table();
